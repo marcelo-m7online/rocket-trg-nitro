@@ -4,8 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Plus, Trash2, Edit, X } from "lucide-react";
+import { Plus, Trash2, Edit, X, Upload } from "lucide-react";
 
 interface DriverForm {
   nome: string;
@@ -13,15 +14,19 @@ interface DriverForm {
   vtlog_id: string;
   cargo: string;
   status: string;
+  bio: string;
 }
 
-const emptyForm: DriverForm = { nome: "", nickname: "", vtlog_id: "", cargo: "Motorista", status: "ativo" };
+const emptyForm: DriverForm = { nome: "", nickname: "", vtlog_id: "", cargo: "Motorista", status: "ativo", bio: "" };
 
 export default function AdminDrivers() {
   const qc = useQueryClient();
   const [form, setForm] = useState<DriverForm>(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [truckFile, setTruckFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const { data: drivers } = useQuery({
     queryKey: ["admin-drivers"],
@@ -31,31 +36,58 @@ export default function AdminDrivers() {
     },
   });
 
+  const uploadFile = async (file: File, bucket: string) => {
+    const ext = file.name.split(".").pop();
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error } = await supabase.storage.from(bucket).upload(path, file);
+    if (error) throw error;
+    const { data } = supabase.storage.from(bucket).getPublicUrl(path);
+    return data.publicUrl;
+  };
+
   const handleSave = async () => {
     if (!form.nome || !form.nickname) { toast.error("Nome e Nickname obrigatórios"); return; }
-    if (editingId) {
-      const { error } = await supabase.from("drivers").update({
+    setUploading(true);
+
+    try {
+      let avatar_url: string | undefined;
+      let avatar_url_caminhao: string | undefined;
+
+      if (avatarFile) avatar_url = await uploadFile(avatarFile, "drivers");
+      if (truckFile) avatar_url_caminhao = await uploadFile(truckFile, "drivers");
+
+      const payload: any = {
         nome: form.nome, nickname: form.nickname, vtlog_id: form.vtlog_id || null,
-        cargo: form.cargo, status: form.status,
-      }).eq("id", editingId);
-      if (error) { toast.error("Erro ao atualizar"); return; }
-      toast.success("Motorista atualizado!");
-    } else {
-      const { error } = await supabase.from("drivers").insert({
-        nome: form.nome, nickname: form.nickname, vtlog_id: form.vtlog_id || null,
-        cargo: form.cargo, status: form.status,
-      });
-      if (error) { toast.error("Erro ao cadastrar"); return; }
-      toast.success("Motorista cadastrado!");
+        cargo: form.cargo, status: form.status, bio: form.bio || null,
+      };
+      if (avatar_url) payload.avatar_url = avatar_url;
+      if (avatar_url_caminhao) payload.avatar_url_caminhao = avatar_url_caminhao;
+
+      if (editingId) {
+        const { error } = await supabase.from("drivers").update(payload).eq("id", editingId);
+        if (error) { toast.error("Erro ao atualizar"); return; }
+        toast.success("Motorista atualizado!");
+      } else {
+        const { error } = await supabase.from("drivers").insert(payload);
+        if (error) { toast.error("Erro ao cadastrar"); return; }
+        toast.success("Motorista cadastrado!");
+      }
+
+      setForm(emptyForm); setEditingId(null); setShowForm(false);
+      setAvatarFile(null); setTruckFile(null);
+      qc.invalidateQueries({ queryKey: ["admin-drivers"] });
+    } catch {
+      toast.error("Erro no upload de imagem");
+    } finally {
+      setUploading(false);
     }
-    setForm(emptyForm);
-    setEditingId(null);
-    setShowForm(false);
-    qc.invalidateQueries({ queryKey: ["admin-drivers"] });
   };
 
   const handleEdit = (driver: any) => {
-    setForm({ nome: driver.nome, nickname: driver.nickname, vtlog_id: driver.vtlog_id || "", cargo: driver.cargo || "Motorista", status: driver.status });
+    setForm({
+      nome: driver.nome, nickname: driver.nickname, vtlog_id: driver.vtlog_id || "",
+      cargo: driver.cargo || "Motorista", status: driver.status, bio: driver.bio || "",
+    });
     setEditingId(driver.id);
     setShowForm(true);
   };
@@ -108,15 +140,32 @@ export default function AdminDrivers() {
               </select>
             </div>
           </div>
-          <Button onClick={handleSave} className="bg-gradient-fire text-primary-foreground font-heading text-xs">
-            {editingId ? "ATUALIZAR" : "CADASTRAR"}
+          <div className="space-y-1">
+            <Label className="text-xs font-display">Bio</Label>
+            <Textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} placeholder="Biografia do motorista..." rows={3} />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <Label className="text-xs font-display">Foto do Motorista</Label>
+              <Input type="file" accept="image/*" onChange={(e) => setAvatarFile(e.target.files?.[0] || null)} />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs font-display">Foto do Caminhão</Label>
+              <Input type="file" accept="image/*" onChange={(e) => setTruckFile(e.target.files?.[0] || null)} />
+            </div>
+          </div>
+          <Button onClick={handleSave} disabled={uploading} className="bg-gradient-fire text-primary-foreground font-heading text-xs">
+            <Upload className="h-4 w-4 mr-1" /> {uploading ? "SALVANDO..." : editingId ? "ATUALIZAR" : "CADASTRAR"}
           </Button>
         </div>
       )}
 
       <div className="space-y-2">
-        {(drivers || []).map((d) => (
+        {(drivers || []).map((d: any) => (
           <div key={d.id} className="flex items-center gap-4 p-4 rounded-xl bg-card border border-border hover:border-primary/20 transition-all">
+            {d.avatar_url && (
+              <img src={d.avatar_url} alt={d.nickname} className="w-10 h-10 rounded-full object-cover border border-border" />
+            )}
             <div className="flex-1 min-w-0">
               <p className="font-display font-bold text-foreground text-sm truncate">{d.nickname}</p>
               <p className="text-xs text-muted-foreground">{d.nome} • {d.cargo}</p>

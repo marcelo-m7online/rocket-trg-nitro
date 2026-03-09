@@ -18,16 +18,39 @@ export default function AdminRecrutamento() {
   });
 
   const updateStatus = async (id: string, status: string) => {
+    if (status === "aprovado") {
+      // Find the recruta data
+      const recruta = (recrutas || []).find((r: any) => r.id === id);
+      if (!recruta) { toast.error("Recruta não encontrado"); return; }
+
+      // Create driver from recruta
+      const { error: driverError } = await supabase.from("drivers").insert({
+        nome: recruta.nome,
+        nickname: recruta.nickname,
+        vtlog_id: recruta.vtlog_id || null,
+        cargo: "Motorista",
+        status: "ativo",
+      });
+      if (driverError) { toast.error("Erro ao criar motorista"); return; }
+    }
+
     const { error } = await supabase.from("recrutamento").update({ status }).eq("id", id);
-    if (error) { toast.error("Erro"); return; }
-    toast.success(`Status atualizado para ${status}!`);
+    if (error) { toast.error("Erro ao atualizar status"); return; }
+
+    if (status === "aprovado") {
+      toast.success("Aprovado! Motorista criado automaticamente.");
+    } else {
+      toast.success(`Status atualizado para ${status}!`);
+    }
     qc.invalidateQueries({ queryKey: ["admin-recrutamento"] });
+    qc.invalidateQueries({ queryKey: ["admin-drivers"] });
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Excluir?")) return;
     await supabase.from("recrutamento").delete().eq("id", id);
-    toast.success("Excluído!"); qc.invalidateQueries({ queryKey: ["admin-recrutamento"] });
+    toast.success("Excluído!");
+    qc.invalidateQueries({ queryKey: ["admin-recrutamento"] });
   };
 
   const statusIcon = (s: string) => {
@@ -72,17 +95,27 @@ export default function AdminRecrutamento() {
             {r.experiencia && <p className="text-xs text-muted-foreground"><span className="font-display font-semibold text-foreground">Experiência:</span> {r.experiencia}</p>}
             {r.motivacao && <p className="text-xs text-muted-foreground"><span className="font-display font-semibold text-foreground">Motivação:</span> {r.motivacao}</p>}
 
-            <div className="flex gap-2 pt-1">
-              <Button size="sm" variant="outline" onClick={() => updateStatus(r.id, "aprovado")} className="text-xs font-display border-green-500/30 text-green-400 hover:bg-green-500/10">
-                <CheckCircle className="h-3 w-3 mr-1" /> Aprovar
-              </Button>
-              <Button size="sm" variant="outline" onClick={() => updateStatus(r.id, "rejeitado")} className="text-xs font-display border-destructive/30 text-destructive hover:bg-destructive/10">
-                <XCircle className="h-3 w-3 mr-1" /> Rejeitar
-              </Button>
-              <Button size="sm" variant="ghost" onClick={() => handleDelete(r.id)}>
-                <Trash2 className="h-3 w-3 text-destructive" />
-              </Button>
-            </div>
+            {r.status === "pendente" && (
+              <div className="flex gap-2 pt-1">
+                <Button size="sm" variant="outline" onClick={() => updateStatus(r.id, "aprovado")} className="text-xs font-display border-green-500/30 text-green-400 hover:bg-green-500/10">
+                  <CheckCircle className="h-3 w-3 mr-1" /> Aprovar
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => updateStatus(r.id, "rejeitado")} className="text-xs font-display border-destructive/30 text-destructive hover:bg-destructive/10">
+                  <XCircle className="h-3 w-3 mr-1" /> Rejeitar
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => handleDelete(r.id)}>
+                  <Trash2 className="h-3 w-3 text-destructive" />
+                </Button>
+              </div>
+            )}
+
+            {r.status !== "pendente" && (
+              <div className="flex gap-2 pt-1">
+                <Button size="sm" variant="ghost" onClick={() => handleDelete(r.id)}>
+                  <Trash2 className="h-3 w-3 text-destructive" />
+                </Button>
+              </div>
+            )}
           </div>
         ))}
 
