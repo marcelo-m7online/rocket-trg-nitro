@@ -14,7 +14,286 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      blog_posts: {
+        Row: {
+          autor: string
+          conteudo: string
+          created_at: string
+          data_publicacao: string
+          id: string
+          imagem_capa: string | null
+          publicado: boolean | null
+          slug: string | null
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          autor: string
+          conteudo: string
+          created_at?: string
+          data_publicacao?: string
+          id?: string
+          imagem_capa?: string | null
+          publicado?: boolean | null
+          slug?: string | null
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          autor?: string
+          conteudo?: string
+          created_at?: string
+          data_publicacao?: string
+          id?: string
+          imagem_capa?: string | null
+          publicado?: boolean | null
+          slug?: string | null
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      comboios: {
+        Row: {
+          created_at: string
+          data: string
+          descricao: string | null
+          id: string
+          imagem_url: string | null
+          mapa: string | null
+          participantes: string[] | null
+          rota: string
+          status: string | null
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data: string
+          descricao?: string | null
+          id?: string
+          imagem_url?: string | null
+          mapa?: string | null
+          participantes?: string[] | null
+          rota: string
+          status?: string | null
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data?: string
+          descricao?: string | null
+          id?: string
+          imagem_url?: string | null
+          mapa?: string | null
+          participantes?: string[] | null
+          rota?: string
+          status?: string | null
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      drivers: {
+        Row: {
+          avatar_url: string | null
+          cargo: string | null
+          created_at: string
+          data_entrada: string
+          id: string
+          km_rodados: number
+          nickname: string
+          nome: string
+          pontos: number
+          status: string
+          updated_at: string
+          viagens: number
+          vtlog_id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          cargo?: string | null
+          created_at?: string
+          data_entrada?: string
+          id?: string
+          km_rodados?: number
+          nickname: string
+          nome: string
+          pontos?: number
+          status?: string
+          updated_at?: string
+          viagens?: number
+          vtlog_id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          cargo?: string | null
+          created_at?: string
+          data_entrada?: string
+          id?: string
+          km_rodados?: number
+          nickname?: string
+          nome?: string
+          pontos?: number
+          status?: string
+          updated_at?: string
+          viagens?: number
+          vtlog_id?: string | null
+        }
+        Relationships: []
+      }
+      galeria: {
+        Row: {
+          categoria: string | null
+          created_at: string
+          data: string
+          id: string
+          imagem_url: string
+          titulo: string
+        }
+        Insert: {
+          categoria?: string | null
+          created_at?: string
+          data?: string
+          id?: string
+          imagem_url: string
+          titulo: string
+        }
+        Update: {
+          categoria?: string | null
+          created_at?: string
+          data?: string
+          id?: string
+          imagem_url?: string
+          titulo?: string
+        }
+        Relationships: []
+      }
+      hall_da_fama: {
+        Row: {
+          created_at: string
+          descricao: string | null
+          driver_id: string
+          id: string
+          mes_referencia: string | null
+          tipo: string | null
+          titulo: string
+          trofeu: string | null
+        }
+        Insert: {
+          created_at?: string
+          descricao?: string | null
+          driver_id: string
+          id?: string
+          mes_referencia?: string | null
+          tipo?: string | null
+          titulo: string
+          trofeu?: string | null
+        }
+        Update: {
+          created_at?: string
+          descricao?: string | null
+          driver_id?: string
+          id?: string
+          mes_referencia?: string | null
+          tipo?: string | null
+          titulo?: string
+          trofeu?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hall_da_fama_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      produtos: {
+        Row: {
+          ativo: boolean | null
+          categoria: string | null
+          created_at: string
+          descricao: string | null
+          estoque: number
+          id: string
+          imagem_url: string | null
+          nome: string
+          preco: number
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean | null
+          categoria?: string | null
+          created_at?: string
+          descricao?: string | null
+          estoque?: number
+          id?: string
+          imagem_url?: string | null
+          nome: string
+          preco: number
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean | null
+          categoria?: string | null
+          created_at?: string
+          descricao?: string | null
+          estoque?: number
+          id?: string
+          imagem_url?: string | null
+          nome?: string
+          preco?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ranking: {
+        Row: {
+          created_at: string
+          driver_id: string
+          id: string
+          km: number
+          periodo: string | null
+          pontos: number
+          posicao: number
+          updated_at: string
+          viagens: number
+        }
+        Insert: {
+          created_at?: string
+          driver_id: string
+          id?: string
+          km?: number
+          periodo?: string | null
+          pontos?: number
+          posicao?: number
+          updated_at?: string
+          viagens?: number
+        }
+        Update: {
+          created_at?: string
+          driver_id?: string
+          id?: string
+          km?: number
+          periodo?: string | null
+          pontos?: number
+          posicao?: number
+          updated_at?: string
+          viagens?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ranking_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
