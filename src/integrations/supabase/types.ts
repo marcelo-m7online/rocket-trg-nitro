@@ -294,6 +294,51 @@ export type Database = {
           },
         ]
       }
+      recrutamento: {
+        Row: {
+          created_at: string
+          discord: string | null
+          experiencia: string | null
+          id: string
+          idade: number | null
+          motivacao: string | null
+          nickname: string
+          nome: string
+          status: string
+          steam: string | null
+          updated_at: string
+          vtlog_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          discord?: string | null
+          experiencia?: string | null
+          id?: string
+          idade?: number | null
+          motivacao?: string | null
+          nickname: string
+          nome: string
+          status?: string
+          steam?: string | null
+          updated_at?: string
+          vtlog_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          discord?: string | null
+          experiencia?: string | null
+          id?: string
+          idade?: number | null
+          motivacao?: string | null
+          nickname?: string
+          nome?: string
+          status?: string
+          steam?: string | null
+          updated_at?: string
+          vtlog_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
