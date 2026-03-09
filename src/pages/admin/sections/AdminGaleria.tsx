@@ -4,13 +4,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Plus, Trash2, X, Upload } from "lucide-react";
 
 export default function AdminGaleria() {
   const qc = useQueryClient();
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ titulo: "", categoria: "comboio" });
+  const [form, setForm] = useState({ titulo: "", categoria: "comboio", descricao: "" });
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -34,11 +35,12 @@ export default function AdminGaleria() {
       titulo: form.titulo,
       imagem_url: urlData.publicUrl,
       categoria: form.categoria,
+      descricao: form.descricao || null,
     });
     setUploading(false);
     if (error) { toast.error("Erro ao salvar"); return; }
     toast.success("Foto adicionada!");
-    setForm({ titulo: "", categoria: "comboio" }); setFile(null); setShowForm(false);
+    setForm({ titulo: "", categoria: "comboio", descricao: "" }); setFile(null); setShowForm(false);
     qc.invalidateQueries({ queryKey: ["admin-galeria"] });
   };
 
@@ -67,6 +69,10 @@ export default function AdminGaleria() {
             </div>
           </div>
           <div className="space-y-1">
+            <Label className="text-xs font-display">Descrição</Label>
+            <Textarea value={form.descricao} onChange={(e) => setForm({ ...form, descricao: e.target.value })} placeholder="Descrição da imagem..." rows={2} />
+          </div>
+          <div className="space-y-1">
             <Label className="text-xs font-display">Imagem</Label>
             <Input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
           </div>
@@ -77,11 +83,12 @@ export default function AdminGaleria() {
       )}
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {(photos || []).map((p) => (
+        {(photos || []).map((p: any) => (
           <div key={p.id} className="rounded-xl overflow-hidden border border-border group relative">
             <img src={p.imagem_url} alt={p.titulo} className="w-full aspect-square object-cover" />
             <div className="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
               <p className="text-xs font-display font-bold text-foreground">{p.titulo}</p>
+              {p.descricao && <p className="text-xs text-muted-foreground px-2 text-center">{p.descricao}</p>}
               <Button variant="destructive" size="sm" onClick={() => handleDelete(p.id)}><Trash2 className="h-3 w-3 mr-1" /> Excluir</Button>
             </div>
           </div>

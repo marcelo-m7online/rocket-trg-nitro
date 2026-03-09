@@ -13,6 +13,7 @@ const navItems = [
   { label: "Hall da Fama", path: "/hall-da-fama" },
   { label: "Comboios", path: "/comboios" },
   { label: "Galeria", path: "/galeria" },
+  { label: "Nossa Frota", path: "/nossa-frota" },
   { label: "Loja", path: "/loja" },
   { label: "Blog", path: "/blog" },
   { label: "Recrutamento", path: "/recrutamento" },

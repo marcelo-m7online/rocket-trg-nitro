@@ -10,6 +10,7 @@ import Ranking from "./pages/Ranking";
 import HallDaFama from "./pages/HallDaFama";
 import Comboios from "./pages/Comboios";
 import Galeria from "./pages/Galeria";
+import NossaFrota from "./pages/NossaFrota";
 import Loja from "./pages/Loja";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/hall-da-fama" element={<HallDaFama />} />
           <Route path="/comboios" element={<Comboios />} />
           <Route path="/galeria" element={<Galeria />} />
+          <Route path="/nossa-frota" element={<NossaFrota />} />
           <Route path="/loja" element={<Loja />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
