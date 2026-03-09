@@ -53,6 +53,59 @@ export type Database = {
         }
         Relationships: []
       }
+      caminhoes: {
+        Row: {
+          ano: string | null
+          created_at: string
+          descricao: string | null
+          driver_id: string | null
+          id: string
+          imagem_url: string | null
+          marca: string | null
+          modelo: string | null
+          nome: string
+          placa: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          ano?: string | null
+          created_at?: string
+          descricao?: string | null
+          driver_id?: string | null
+          id?: string
+          imagem_url?: string | null
+          marca?: string | null
+          modelo?: string | null
+          nome: string
+          placa?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          ano?: string | null
+          created_at?: string
+          descricao?: string | null
+          driver_id?: string | null
+          id?: string
+          imagem_url?: string | null
+          marca?: string | null
+          modelo?: string | null
+          nome?: string
+          placa?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "caminhoes_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       comboios: {
         Row: {
           created_at: string
@@ -98,6 +151,8 @@ export type Database = {
       drivers: {
         Row: {
           avatar_url: string | null
+          avatar_url_caminhao: string | null
+          bio: string | null
           cargo: string | null
           created_at: string
           data_entrada: string
@@ -113,6 +168,8 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          avatar_url_caminhao?: string | null
+          bio?: string | null
           cargo?: string | null
           created_at?: string
           data_entrada?: string
@@ -128,6 +185,8 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          avatar_url_caminhao?: string | null
+          bio?: string | null
           cargo?: string | null
           created_at?: string
           data_entrada?: string
@@ -148,6 +207,7 @@ export type Database = {
           categoria: string | null
           created_at: string
           data: string
+          descricao: string | null
           id: string
           imagem_url: string
           titulo: string
@@ -156,6 +216,7 @@ export type Database = {
           categoria?: string | null
           created_at?: string
           data?: string
+          descricao?: string | null
           id?: string
           imagem_url: string
           titulo: string
@@ -164,6 +225,7 @@ export type Database = {
           categoria?: string | null
           created_at?: string
           data?: string
+          descricao?: string | null
           id?: string
           imagem_url?: string
           titulo?: string
@@ -210,6 +272,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      lives: {
+        Row: {
+          ativa: boolean
+          created_at: string
+          id: string
+          plataforma: string
+          streamer: string
+          titulo: string
+          url: string
+        }
+        Insert: {
+          ativa?: boolean
+          created_at?: string
+          id?: string
+          plataforma?: string
+          streamer: string
+          titulo: string
+          url: string
+        }
+        Update: {
+          ativa?: boolean
+          created_at?: string
+          id?: string
+          plataforma?: string
+          streamer?: string
+          titulo?: string
+          url?: string
+        }
+        Relationships: []
       }
       produtos: {
         Row: {
