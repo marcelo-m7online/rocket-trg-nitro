@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Flame } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import logoImg from "@/assets/logo-rocket-trg.jpeg";
 
 const navItems = [
   { label: "Home", path: "/" },
@@ -14,6 +15,7 @@ const navItems = [
   { label: "Galeria", path: "/galeria" },
   { label: "Loja", path: "/loja" },
   { label: "Blog", path: "/blog" },
+  { label: "Recrutamento", path: "/recrutamento" },
 ];
 
 export default function Navbar() {
@@ -24,7 +26,7 @@ export default function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-xl border-b border-border">
       <div className="container mx-auto flex items-center justify-between h-16 md:h-20">
         <Link to="/" className="flex items-center gap-2 group">
-          <Flame className="h-8 w-8 text-primary group-hover:animate-fire-flicker" />
+          <img src={logoImg} alt="The Rocket TRG" className="h-10 w-10 rounded-full border border-primary/30 group-hover:scale-110 transition-transform" />
           <span className="font-heading text-lg md:text-xl font-bold text-gradient-fire">
             THE ROCKET TRG
           </span>

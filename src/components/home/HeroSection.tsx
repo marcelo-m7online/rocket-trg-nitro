@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Flame, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import logoImg from "@/assets/logo-rocket-trg.jpeg";
 
 export default function HeroSection() {
   return (
@@ -13,9 +14,22 @@ export default function HeroSection() {
 
       <div className="container mx-auto relative z-10 text-center px-4">
         <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8 }}
+          className="mb-6"
+        >
+          <img
+            src={logoImg}
+            alt="The Rocket TRG"
+            className="w-32 h-32 md:w-44 md:h-44 rounded-full mx-auto border-2 border-primary/30 glow-fire"
+          />
+        </motion.div>
+
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
         >
           <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full border border-primary/30 bg-primary/5">
             <Flame className="h-4 w-4 text-primary animate-fire-flicker" />
@@ -28,7 +42,7 @@ export default function HeroSection() {
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
           className="font-heading text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight"
         >
           <span className="text-gradient-fire">THE ROCKET</span>
@@ -51,7 +65,7 @@ export default function HeroSection() {
           transition={{ duration: 0.8, delay: 0.6 }}
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
-          <Link to="/como-funciona">
+          <Link to="/recrutamento">
             <Button size="lg" className="bg-gradient-fire text-primary-foreground font-heading text-base px-8 py-6 glow-fire hover:scale-105 transition-transform">
               ENTRAR NA EMPRESA
               <ChevronRight className="h-5 w-5" />
