@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Flame, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
+import logoImg from "@/assets/logo-rocket-trg.jpeg";
 
 export default function Footer() {
   return (
@@ -8,7 +9,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <Flame className="h-6 w-6 text-primary" />
+              <img src={logoImg} alt="The Rocket TRG" className="h-8 w-8 rounded-full border border-primary/30" />
               <span className="font-heading text-lg font-bold text-gradient-fire">
                 THE ROCKET TRG
               </span>
@@ -26,6 +27,7 @@ export default function Footer() {
                 { label: "Sobre Nós", path: "/sobre" },
                 { label: "Ranking", path: "/ranking" },
                 { label: "Comboios", path: "/comboios" },
+                { label: "Recrutamento", path: "/recrutamento" },
               ].map((item) => (
                 <Link
                   key={item.path}

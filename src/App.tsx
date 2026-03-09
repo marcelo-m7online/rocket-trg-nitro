@@ -13,6 +13,8 @@ import Galeria from "./pages/Galeria";
 import Loja from "./pages/Loja";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import Recrutamento from "./pages/Recrutamento";
+import AdminLayout from "./pages/admin/AdminLayout";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +36,8 @@ const App = () => (
           <Route path="/loja" element={<Loja />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
+          <Route path="/recrutamento" element={<Recrutamento />} />
+          <Route path="/admin" element={<AdminLayout />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
