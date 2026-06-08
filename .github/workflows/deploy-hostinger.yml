@@ -9,8 +9,6 @@ jobs:
   web-deploy:
     name: 🚀 Deploy Napoleon (SFTP)
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: 🚚 Baixando os arquivos
         uses: actions/checkout@v4
@@ -27,20 +25,6 @@ jobs:
       - name: 🏗️ Construindo o projeto
         run: npm run build
 
-      - name: 🔍 Inspecionar diretórios no servidor
-        run: |
-          sudo apt-get update && sudo apt-get install -y sshpass
-          export SSHPASS="${{ secrets.FTP_PASSWORD }}"
-          echo -e "pwd\nls -la\nls -la public_html\nls -la public_html/trglogistics.com.br" | sshpass -e sftp -o StrictHostKeyChecking=no -o ConnectTimeout=15 -P 1157 "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}" > directory_structure.txt
-
-      - name: 📤 Commitar e enviar logs
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add directory_structure.txt
-          git commit -m "chore: save directory structure log"
-          git push origin main
-
       - name: 🚀 Enviando para a Napoleon via SFTP
         uses: milanmk/actions-file-deployer@master
         with:
@@ -49,7 +33,7 @@ jobs:
           remote-port: 1157
           remote-user: ${{ secrets.FTP_USERNAME }}
           remote-password: ${{ secrets.FTP_PASSWORD }}
-          remote-path: /domains/trglogistics.com.br/public_html/
+          remote-path: domains/trglogistics.com.br/public_html/
           local-path: ./dist/
           sync: full
 
