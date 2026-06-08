@@ -25,6 +25,31 @@ jobs:
       - name: 🏗️ Construindo o projeto
         run: npm run build
 
+      - name: 🔍 SFTP Debug Listing
+        run: |
+          sudo apt-get update && sudo apt-get install -y sshpass
+          export SSHPASS="${{ secrets.FTP_PASSWORD }}"
+          
+          # Create sftp batch file
+          cat << 'EOF' > sftp_commands.txt
+          pwd
+          ls
+          ls domains
+          ls domains/trglogistics.com.br
+          ls domains/trglogistics.com.br/public_html
+          EOF
+          
+          # Run SFTP and output to sftp_debug.txt in dist/
+          sshpass -e sftp -o StrictHostKeyChecking=no -o ConnectTimeout=15 -P 1157 "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}" < sftp_commands.txt > ./dist/sftp_debug.txt 2>&1 || true
+          
+          # Also try to upload sftp_debug.txt to various locations directly
+          cat << 'EOF' > sftp_upload.txt
+          put ./dist/sftp_debug.txt /public_html/sftp_debug.txt
+          put ./dist/sftp_debug.txt domains/trglogistics.com.br/public_html/sftp_debug.txt
+          put ./dist/sftp_debug.txt /domains/trglogistics.com.br/public_html/sftp_debug.txt
+          EOF
+          sshpass -e sftp -o StrictHostKeyChecking=no -o ConnectTimeout=15 -P 1157 "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}" < sftp_upload.txt || true
+
       - name: 🚀 Enviando para a Napoleon via SFTP
         uses: milanmk/actions-file-deployer@master
         with:
