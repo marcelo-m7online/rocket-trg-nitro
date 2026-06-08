@@ -64,7 +64,7 @@ export default function AdminCampeonatoFotos() {
         const { data: urlData } = supabase.storage.from("campeonato_fotos").getPublicUrl(path);
         imageUrl = urlData.publicUrl;
       } catch (err) {
-        toast.error("Erro ao fazer upload do arquivo");
+        toast.error("Erro ao fazer upload: " + ((err as any)?.message || err));
         setUploading(false);
         return;
       }
