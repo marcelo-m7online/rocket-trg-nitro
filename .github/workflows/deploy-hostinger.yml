@@ -25,6 +25,12 @@ jobs:
       - name: 🏗️ Construindo o projeto
         run: npm run build
 
+      - name: 🔍 Inspecionar diretórios no servidor
+        run: |
+          sudo apt-get update && sudo apt-get install -y sshpass
+          export SSHPASS="${{ secrets.FTP_PASSWORD }}"
+          sshpass -e ssh -o StrictHostKeyChecking=no -p 1157 "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}" "echo '=== DIRETORIO HOME ==='; pwd; ls -la; echo '=== DIRETORIO PUBLIC_HTML ==='; ls -la public_html"
+
       - name: 🚀 Enviando para a Napoleon via SFTP
         uses: milanmk/actions-file-deployer@master
         with:
@@ -36,3 +42,4 @@ jobs:
           remote-path: /public_html/
           local-path: ./dist/
           sync: full
+
