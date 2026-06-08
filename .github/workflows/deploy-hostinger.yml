@@ -1,4 +1,4 @@
-name: Deploy para Hostinger
+name: Deploy para Napoleon
 
 on:
   push:
@@ -7,29 +7,32 @@ on:
 
 jobs:
   web-deploy:
-    name: 🎉 Deploy Hostinger
+    name: 🚀 Deploy Napoleon (SFTP)
     runs-on: ubuntu-latest
     steps:
       - name: 🚚 Baixando os arquivos
         uses: actions/checkout@v4
-      
+
       - name: 🛠️ Instalando o Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-          
+
       - name: 📦 Instalando dependências
         run: npm ci
-        
+
       - name: 🏗️ Construindo o projeto
         run: npm run build
-        
-      - name: 🚀 Enviando para a Hostinger via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+
+      - name: 🚀 Enviando para a Napoleon via SFTP
+        uses: milanmk/actions-file-deployer@master
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /public_html/
-          local-dir: ./dist/
+          remote-host: ${{ secrets.FTP_SERVER }}
+          remote-protocol: sftp
+          remote-port: 1157
+          remote-user: ${{ secrets.FTP_USERNAME }}
+          remote-password: ${{ secrets.FTP_PASSWORD }}
+          remote-path: /public_html/
+          local-path: ./dist/
+          sync: full
