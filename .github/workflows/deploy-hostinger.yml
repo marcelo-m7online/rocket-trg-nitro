@@ -28,19 +28,16 @@ jobs:
         run: npm run build
 
       - name: 🔍 Inspecionar diretórios no servidor
-        continue-on-error: true
         run: |
           sudo apt-get update && sudo apt-get install -y sshpass
           export SSHPASS="${{ secrets.FTP_PASSWORD }}"
           echo -e "pwd\nls -la\nls -la public_html\nls -la public_html/trglogistics.com.br" | sshpass -e sftp -o StrictHostKeyChecking=no -o ConnectTimeout=15 -P 1157 "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}" > directory_structure.txt 2>&1 || true
 
-      - name: 📤 Commitar e enviar logs
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add directory_structure.txt || true
-          git commit -m "chore: save directory structure log [skip ci]" || true
-          git push origin main || true
+      - name: 📤 Upload de artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: directory-log
+          path: directory_structure.txt
 
       - name: 🚀 Enviando para a Napoleon via SFTP
         uses: milanmk/actions-file-deployer@master
