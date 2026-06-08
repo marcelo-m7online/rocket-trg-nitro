@@ -59,9 +59,9 @@ export default function AdminCampeonatoFotos() {
       try {
         const ext = file.name.split(".").pop();
         const path = `${Date.now()}.${ext}`;
-        const { error: uploadError } = await supabase.storage.from("campeonato_fotos").upload(path, file);
+        const { error: uploadError } = await supabase.storage.from("galeria").upload(path, file);
         if (uploadError) throw uploadError;
-        const { data: urlData } = supabase.storage.from("campeonato_fotos").getPublicUrl(path);
+        const { data: urlData } = supabase.storage.from("galeria").getPublicUrl(path);
         imageUrl = urlData.publicUrl;
       } catch (err) {
         toast.error("Erro ao fazer upload: " + ((err as any)?.message || err));
