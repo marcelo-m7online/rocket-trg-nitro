@@ -21,6 +21,7 @@ export default function AdminCampeonatoFotos() {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ titulo: "", descricao: "", imagem_url_input: "" });
+  const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [photos, setPhotos] = useState<CampeonatoFoto[]>([]);
 
@@ -54,8 +55,23 @@ export default function AdminCampeonatoFotos() {
     setUploading(true);
     let imageUrl = form.imagem_url_input;
 
+    if (file) {
+      try {
+        const ext = file.name.split(".").pop();
+        const path = `${Date.now()}.${ext}`;
+        const { error: uploadError } = await supabase.storage.from("campeonato_fotos").upload(path, file);
+        if (uploadError) throw uploadError;
+        const { data: urlData } = supabase.storage.from("campeonato_fotos").getPublicUrl(path);
+        imageUrl = urlData.publicUrl;
+      } catch (err) {
+        toast.error("Erro ao fazer upload do arquivo");
+        setUploading(false);
+        return;
+      }
+    }
+
     if (!imageUrl) {
-      toast.error("Imagem URL é obrigatória");
+      toast.error("Selecione um arquivo de imagem ou forneça uma URL");
       setUploading(false);
       return;
     }
@@ -108,6 +124,7 @@ export default function AdminCampeonatoFotos() {
 
     setUploading(false);
     setForm({ titulo: "", descricao: "", imagem_url_input: "" });
+    setFile(null);
     setEditingId(null);
     setShowForm(false);
     await loadPhotos();
@@ -121,6 +138,7 @@ export default function AdminCampeonatoFotos() {
 
   const handleCancel = () => {
     setForm({ titulo: "", descricao: "", imagem_url_input: "" });
+    setFile(null);
     setEditingId(null);
     setShowForm(false);
   };
@@ -179,7 +197,15 @@ export default function AdminCampeonatoFotos() {
             />
           </div>
           <div className="space-y-1">
-            <Label className="text-xs font-display">URL da Imagem *</Label>
+            <Label className="text-xs font-display">Arquivo de Imagem (JPG, PNG)</Label>
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
+            />
+          </div>
+          <div className="space-y-1">
+            <Label className="text-xs font-display">Ou URL da Imagem</Label>
             <Input
               value={form.imagem_url_input}
               onChange={(e) => setForm({ ...form, imagem_url_input: e.target.value })}
