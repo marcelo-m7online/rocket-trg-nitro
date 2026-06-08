@@ -9,6 +9,8 @@ jobs:
   web-deploy:
     name: 🚀 Deploy Napoleon (SFTP)
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: 🚚 Baixando os arquivos
         uses: actions/checkout@v4
@@ -26,10 +28,19 @@ jobs:
         run: npm run build
 
       - name: 🔍 Inspecionar diretórios no servidor
+        continue-on-error: true
         run: |
           sudo apt-get update && sudo apt-get install -y sshpass
           export SSHPASS="${{ secrets.FTP_PASSWORD }}"
-          sshpass -e ssh -o StrictHostKeyChecking=no -p 1157 "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}" "echo '=== DIRETORIO HOME ==='; pwd; ls -la; echo '=== DIRETORIO PUBLIC_HTML ==='; ls -la public_html"
+          sshpass -e ssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 -p 1157 "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}" "echo '=== DIRETORIO HOME ==='; pwd; ls -la; echo '=== DIRETORIO PUBLIC_HTML ==='; ls -la public_html" > directory_structure.txt 2>&1 || true
+
+      - name: 📤 Commitar e enviar logs
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add directory_structure.txt || true
+          git commit -m "chore: save directory structure log [skip ci]" || true
+          git push origin main || true
 
       - name: 🚀 Enviando para a Napoleon via SFTP
         uses: milanmk/actions-file-deployer@master
@@ -42,4 +53,5 @@ jobs:
           remote-path: /public_html/
           local-path: ./dist/
           sync: full
+
 
