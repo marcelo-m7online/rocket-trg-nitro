@@ -11,12 +11,22 @@ export default function Blog() {
   const { data: posts } = useQuery({
     queryKey: ["blog-posts"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("blog_posts")
-        .select("*")
-        .eq("publicado", true)
-        .order("data_publicacao", { ascending: false });
-      return data || [];
+      try {
+        const { data, error } = await supabase
+          .from("blog_posts")
+          .select("*")
+          .eq("publicado", true)
+          .order("data_publicacao", { ascending: false });
+        if (error) throw error;
+        if (data) {
+          localStorage.setItem("blog_posts_backup", JSON.stringify(data));
+        }
+        return data || [];
+      } catch (err) {
+        console.error("Erro ao carregar notícias no blog:", err);
+        const saved = localStorage.getItem("blog_posts_backup");
+        return saved ? JSON.parse(saved) : [];
+      }
     },
   });
 
