@@ -1,2 +1,0 @@
-Warning: Permanently added '[pro129.dnspro.net.br]:1157' (ED25519) to the list of known hosts.
-Permission denied, please try again.
