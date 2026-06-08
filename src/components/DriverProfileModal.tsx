@@ -1,20 +1,18 @@
-import { X, Route, MapPin, Trophy, Truck, User } from "lucide-react";
+import { X, Target, DollarSign, Trophy, Truck, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Driver {
-  id: string;
-  nome: string;
+  id: string; // steam_id
   nickname: string;
-  pontos: number;
-  km_rodados: number;
-  viagens: number;
-  cargo: string | null;
-  bio: string | null;
-  avatar_url: string | null;
-  avatar_url_caminhao: string | null;
-  data_entrada: string;
-  vtlog_id: string | null;
-  status: string;
+  nome: string; // role
+  pontos: number; // based on experience
+  avatar?: string;
+  lucro?: number;
+  level?: number;
+  // Fallbacks for optional supabase props removed during transition
+  bio?: string;
+  avatar_url_caminhao?: string;
+  data_entrada?: string;
 }
 
 interface Props {
@@ -51,8 +49,8 @@ export default function DriverProfileModal({ driver, onClose }: Props) {
             </button>
 
             <div className="flex items-end gap-4 mb-6">
-              {driver.avatar_url ? (
-                <img src={driver.avatar_url} alt={driver.nickname} className="w-20 h-20 rounded-full border-4 border-card object-cover" />
+              {driver.avatar ? (
+                <img src={driver.avatar} alt={driver.nickname} className="w-20 h-20 rounded-full border-4 border-card object-cover" />
               ) : (
                 <div className="w-20 h-20 rounded-full border-4 border-card bg-muted flex items-center justify-center">
                   <User className="h-8 w-8 text-muted-foreground" />
@@ -60,7 +58,7 @@ export default function DriverProfileModal({ driver, onClose }: Props) {
               )}
               <div>
                 <h2 className="font-heading text-2xl font-bold text-gradient-fire">{driver.nickname}</h2>
-                <p className="text-sm text-muted-foreground font-display">{driver.nome} • {driver.cargo || "Motorista"}</p>
+                <p className="text-sm text-muted-foreground font-display">{driver.nome}</p>
               </div>
             </div>
 
@@ -71,25 +69,26 @@ export default function DriverProfileModal({ driver, onClose }: Props) {
             <div className="grid grid-cols-3 gap-4 mb-4">
               <div className="text-center p-3 rounded-xl bg-muted/50 border border-border">
                 <Trophy className="h-5 w-5 text-primary mx-auto mb-1" />
-                <p className="font-heading text-lg font-bold text-primary">{driver.pontos.toLocaleString("pt-BR")}</p>
-                <p className="text-xs text-muted-foreground">Pontos</p>
+                <p className="font-heading text-lg font-bold text-primary">{driver.pontos?.toLocaleString("pt-BR")}</p>
+                <p className="text-xs text-muted-foreground">Exp.</p>
               </div>
               <div className="text-center p-3 rounded-xl bg-muted/50 border border-border">
-                <Route className="h-5 w-5 text-primary mx-auto mb-1" />
-                <p className="font-heading text-lg font-bold text-foreground">{driver.viagens}</p>
-                <p className="text-xs text-muted-foreground">Viagens</p>
+                <DollarSign className="h-5 w-5 text-green-500/70 mx-auto mb-1" />
+                <p className="font-heading text-lg font-bold text-green-500/90 tooltip" title={`R$ ${driver.lucro?.toLocaleString("pt-BR")}`}>
+                  {driver.lucro ? `R$ ${(driver.lucro / 1000).toFixed(1)}k` : "R$ 0"}
+                </p>
+                <p className="text-xs text-muted-foreground">Lucro</p>
               </div>
               <div className="text-center p-3 rounded-xl bg-muted/50 border border-border">
-                <MapPin className="h-5 w-5 text-primary mx-auto mb-1" />
-                <p className="font-heading text-lg font-bold text-foreground">{driver.km_rodados.toLocaleString("pt-BR")}</p>
-                <p className="text-xs text-muted-foreground">KM</p>
+                <Target className="h-5 w-5 text-primary mx-auto mb-1" />
+                <p className="font-heading text-lg font-bold text-foreground">{driver.level || 0}</p>
+                <p className="text-xs text-muted-foreground">Level</p>
               </div>
             </div>
 
             <div className="flex items-center gap-2 text-xs text-muted-foreground font-display">
               <Truck className="h-3 w-3" />
-              <span>Membro desde {new Date(driver.data_entrada).toLocaleDateString("pt-BR")}</span>
-              {driver.vtlog_id && <span>• VTLOG: {driver.vtlog_id}</span>}
+              <span>Conectado à API VTLOG • ID: {driver.id}</span>
             </div>
           </div>
         </motion.div>

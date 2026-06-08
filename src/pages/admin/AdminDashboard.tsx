@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
   Users, Trophy, Truck, Camera, ShoppingBag, Newspaper, Crown,
-  UserPlus, LogOut, Radio,
+  UserPlus, LogOut, Radio, Image, Zap,
 } from "lucide-react";
 import logoImg from "@/assets/logo-rocket-trg.jpeg";
 import AdminDrivers from "./sections/AdminDrivers";
@@ -17,6 +17,8 @@ import AdminHallDaFama from "./sections/AdminHallDaFama";
 import AdminRecrutamento from "./sections/AdminRecrutamento";
 import AdminCaminhoes from "./sections/AdminCaminhoes";
 import AdminLives from "./sections/AdminLives";
+import AdminCampeonatoFotos from "./sections/AdminCampeonatoFotos";
+import AdminFormulaTruck from "./sections/AdminFormulaTruck";
 
 const tabs = [
   { id: "drivers", label: "Motoristas", icon: Users },
@@ -24,6 +26,8 @@ const tabs = [
   { id: "ranking", label: "Ranking", icon: Trophy },
   { id: "comboios", label: "Comboios", icon: Truck },
   { id: "galeria", label: "Galeria", icon: Camera },
+  { id: "campeonato", label: "Campeonato Fotos", icon: Image },
+  { id: "formula_truck", label: "Fórmula Truck", icon: Zap },
   { id: "produtos", label: "Produtos", icon: ShoppingBag },
   { id: "blog", label: "Blog", icon: Newspaper },
   { id: "hall", label: "Hall da Fama", icon: Crown },
@@ -46,6 +50,8 @@ export default function AdminDashboard() {
       case "ranking": return <AdminRanking />;
       case "comboios": return <AdminComboios />;
       case "galeria": return <AdminGaleria />;
+      case "campeonato": return <AdminCampeonatoFotos />;
+      case "formula_truck": return <AdminFormulaTruck />;
       case "produtos": return <AdminProdutos />;
       case "blog": return <AdminBlog />;
       case "hall": return <AdminHallDaFama />;

@@ -6,8 +6,17 @@ import AdminDashboard from "./AdminDashboard";
 export default function AdminLayout() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [demoMode, setDemoMode] = useState(false);
 
   useEffect(() => {
+    // Check for demo mode in localStorage
+    const isDemoMode = localStorage.getItem("admin_demo_mode") === "true";
+    if (isDemoMode) {
+      setDemoMode(true);
+      setLoading(false);
+      return;
+    }
+
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       setLoading(false);
@@ -26,8 +35,8 @@ export default function AdminLayout() {
     );
   }
 
-  if (!session) {
-    return <AdminLogin onLogin={() => {}} />;
+  if (!session && !demoMode) {
+    return <AdminLogin onLogin={() => setDemoMode(false)} />;
   }
 
   return <AdminDashboard />;

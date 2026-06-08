@@ -25,6 +25,12 @@ export default function AdminLogin({ onLogin }: { onLogin: () => void }) {
     }
   };
 
+  const handleDemoMode = () => {
+    localStorage.setItem("admin_demo_mode", "true");
+    toast.success("Modo demo ativado!");
+    setTimeout(() => window.location.reload(), 500);
+  };
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8">
@@ -47,6 +53,12 @@ export default function AdminLogin({ onLogin }: { onLogin: () => void }) {
             {loading ? "ENTRANDO..." : "ENTRAR"}
           </Button>
         </form>
+        <div className="space-y-2">
+          <p className="text-center text-xs text-muted-foreground">Ou teste sem autenticação:</p>
+          <Button onClick={handleDemoMode} variant="outline" className="w-full font-heading text-sm">
+            MODO DEMO
+          </Button>
+        </div>
       </div>
     </div>
   );

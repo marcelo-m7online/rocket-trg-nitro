@@ -5,6 +5,8 @@ import StatsSection from "@/components/home/StatsSection";
 import QuickRanking from "@/components/home/QuickRanking";
 import UpcomingConvoys from "@/components/home/UpcomingConvoys";
 import GalleryCarousel from "@/components/home/GalleryCarousel";
+import CampeonatoFotos from "@/components/home/CampeonatoFotos";
+import FormulaTruckNoticia from "@/components/home/FormulaTruckNoticia";
 import LatestNews from "@/components/home/LatestNews";
 
 const Index = () => {
@@ -15,6 +17,8 @@ const Index = () => {
       <StatsSection />
       <QuickRanking />
       <UpcomingConvoys />
+      <CampeonatoFotos />
+      <FormulaTruckNoticia />
       <GalleryCarousel />
       <LatestNews />
     </Layout>

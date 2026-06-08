@@ -17,6 +17,8 @@ const navItems = [
   { label: "Loja", path: "/loja" },
   { label: "Blog", path: "/blog" },
   { label: "Recrutamento", path: "/recrutamento" },
+  { label: "Cadastro", path: "/cadastro" },
+  { label: "Log In", path: "/login" },
 ];
 
 export default function Navbar() {
@@ -39,11 +41,10 @@ export default function Navbar() {
             <Link
               key={item.path}
               to={item.path}
-              className={`px-3 py-2 rounded-md text-sm font-display font-semibold transition-all duration-300 hover:text-primary hover:bg-primary/10 ${
-                location.pathname === item.path
-                  ? "text-primary bg-primary/10"
-                  : "text-muted-foreground"
-              }`}
+              className={`px-3 py-2 rounded-md text-sm font-display font-semibold transition-all duration-300 hover:text-primary hover:bg-primary/10 ${location.pathname === item.path
+                ? "text-primary bg-primary/10"
+                : "text-muted-foreground"
+                }`}
             >
               {item.label}
             </Link>
@@ -76,11 +77,10 @@ export default function Navbar() {
                   key={item.path}
                   to={item.path}
                   onClick={() => setIsOpen(false)}
-                  className={`px-4 py-3 rounded-md text-base font-display font-semibold transition-all ${
-                    location.pathname === item.path
-                      ? "text-primary bg-primary/10"
-                      : "text-muted-foreground hover:text-primary hover:bg-primary/5"
-                  }`}
+                  className={`px-4 py-3 rounded-md text-base font-display font-semibold transition-all ${location.pathname === item.path
+                    ? "text-primary bg-primary/10"
+                    : "text-muted-foreground hover:text-primary hover:bg-primary/5"
+                    }`}
                 >
                   {item.label}
                 </Link>

@@ -15,6 +15,9 @@ import Loja from "./pages/Loja";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Recrutamento from "./pages/Recrutamento";
+import Cadastro from "./pages/Cadastro";
+import Login from "./pages/Login";
+import Painel from "./pages/Painel";
 import AdminLayout from "./pages/admin/AdminLayout";
 import NotFound from "./pages/NotFound";
 
@@ -39,6 +42,9 @@ const App = () => (
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/recrutamento" element={<Recrutamento />} />
+          <Route path="/cadastro" element={<Cadastro />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/painel" element={<Painel />} />
           <Route path="/admin" element={<AdminLayout />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

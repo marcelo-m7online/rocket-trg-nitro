@@ -3,23 +3,21 @@ import { Trophy, Medal, Award } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchVtlogRanking } from "@/integrations/vtlog/client";
 
 const positionIcons = [Trophy, Medal, Award];
 const positionColors = ["text-gold", "text-muted-foreground", "text-fire-orange"];
 
 export default function QuickRanking() {
-  const { data: topDrivers } = useQuery({
-    queryKey: ["top-drivers"],
+  const { data: topDrivers, isLoading } = useQuery({
+    queryKey: ["vtlog-top-drivers"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("drivers")
-        .select("*")
-        .eq("status", "ativo")
-        .order("pontos", { ascending: false })
-        .limit(5);
-      return data || [];
+      const data = await fetchVtlogRanking();
+      // Pegar apenas os 5 primeiros para o Quick Ranking da Home
+      return data.slice(0, 5);
     },
+    // Cache de 5 minutos para evitar bater limites da API ao navegar
+    staleTime: 5 * 60 * 1000,
   });
 
   return (
@@ -38,7 +36,13 @@ export default function QuickRanking() {
         </motion.div>
 
         <div className="max-w-2xl mx-auto space-y-3">
-          {(topDrivers || []).map((driver, i) => {
+          {isLoading && (
+            <div className="text-center text-muted-foreground font-display py-8 animate-pulse">
+              Carregando dados da VTLOG...
+            </div>
+          )}
+
+          {!isLoading && (topDrivers || []).map((driver, i) => {
             const Icon = positionIcons[Math.min(i, 2)];
             const color = positionColors[Math.min(i, 2)];
             return (
@@ -53,7 +57,20 @@ export default function QuickRanking() {
                 <span className="font-heading text-2xl font-bold text-muted-foreground w-8">
                   #{i + 1}
                 </span>
-                <Icon className={`h-6 w-6 ${color}`} />
+                {i < 3 ? (
+                  <Icon className={`h-6 w-6 ${color}`} />
+                ) : (
+                  <div className="w-6 h-6" /> // spacer for alignment
+                )}
+
+                {driver.avatar ? (
+                  <img src={driver.avatar} alt={driver.nickname} className="w-10 h-10 rounded-full border border-border/50 object-cover" />
+                ) : (
+                  <div className="w-10 h-10 bg-secondary rounded-full flex items-center justify-center font-bold text-muted-foreground">
+                    {driver.nickname.charAt(0)}
+                  </div>
+                )}
+
                 <div className="flex-1">
                   <p className="font-display font-bold text-foreground">{driver.nickname}</p>
                   <p className="text-xs text-muted-foreground">{driver.nome}</p>
@@ -62,15 +79,15 @@ export default function QuickRanking() {
                   <p className="font-heading text-lg font-bold text-primary">
                     {driver.pontos.toLocaleString("pt-BR")}
                   </p>
-                  <p className="text-xs text-muted-foreground">pontos</p>
+                  <p className="text-xs text-muted-foreground">exp</p>
                 </div>
               </motion.div>
             );
           })}
 
-          {(!topDrivers || topDrivers.length === 0) && (
+          {!isLoading && (!topDrivers || topDrivers.length === 0) && (
             <p className="text-center text-muted-foreground font-display py-8">
-              Nenhum motorista cadastrado ainda.
+              Nenhum motorista sincronizado ou API Indisponível.
             </p>
           )}
         </div>
