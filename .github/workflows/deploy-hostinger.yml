@@ -32,7 +32,7 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y sshpass
           export SSHPASS="${{ secrets.FTP_PASSWORD }}"
-          sshpass -e ssh -o StrictHostKeyChecking=no -o ConnectTimeout=15 -p 1157 "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}" "echo '=== DIRETORIO HOME ==='; pwd; ls -la; echo '=== DIRETORIO PUBLIC_HTML ==='; ls -la public_html" > directory_structure.txt 2>&1 || true
+          echo -e "pwd\nls -la\nls -la public_html\nls -la public_html/trglogistics.com.br" | sshpass -e sftp -o StrictHostKeyChecking=no -o ConnectTimeout=15 -P 1157 "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}" > directory_structure.txt 2>&1 || true
 
       - name: 📤 Commitar e enviar logs
         run: |
