@@ -31,28 +31,24 @@ jobs:
           export SSHPASS="${{ secrets.FTP_PASSWORD }}"
           
           # Create sftp batch file
-          cat << 'EOF' > sftp_commands.txt
-          pwd
-          ls -la
-          cd domains
-          pwd
-          ls -la
-          cd trglogistics.com.br
-          pwd
-          ls -la
-          cd public_html
-          pwd
-          ls -la
-          EOF
+          echo "pwd" > sftp_commands.txt
+          echo "ls -la" >> sftp_commands.txt
+          echo "cd domains" >> sftp_commands.txt
+          echo "pwd" >> sftp_commands.txt
+          echo "ls -la" >> sftp_commands.txt
+          echo "cd trglogistics.com.br" >> sftp_commands.txt
+          echo "pwd" >> sftp_commands.txt
+          echo "ls -la" >> sftp_commands.txt
+          echo "cd public_html" >> sftp_commands.txt
+          echo "pwd" >> sftp_commands.txt
+          echo "ls -la" >> sftp_commands.txt
           
           # Run SFTP and output to sftp_debug.txt in dist/
           sshpass -e sftp -o StrictHostKeyChecking=no -o ConnectTimeout=15 -P 1157 "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}" < sftp_commands.txt > ./dist/sftp_debug.txt 2>&1 || true
           
-          # Also try to upload sftp_debug.txt to various locations directly
-          cat << 'EOF' > sftp_upload.txt
-          cd domains/trglogistics.com.br/public_html
-          put ./dist/sftp_debug.txt
-          EOF
+          # Also try to upload sftp_debug.txt directly
+          echo "cd domains/trglogistics.com.br/public_html" > sftp_upload.txt
+          echo "put ./dist/sftp_debug.txt" >> sftp_upload.txt
           sshpass -e sftp -o StrictHostKeyChecking=no -o ConnectTimeout=15 -P 1157 "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}" < sftp_upload.txt || true
 
       - name: 🚀 Enviando para a Napoleon via SFTP
