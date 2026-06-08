@@ -5,6 +5,9 @@ on:
     branches:
       - main # Quando houver push para a branch main, a automação executa
 
+# Comentário para forçar disparo da Action após configuração de Secrets na Napoleon
+
+
 jobs:
   web-deploy:
     name: 🚀 Deploy Napoleon (SFTP)
