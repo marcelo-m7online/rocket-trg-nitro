@@ -50,7 +50,21 @@ export default function CampeonatoFotos() {
   }
 
   if (!campeonatos || campeonatos.length === 0) {
-    return null;
+    return (
+      <section className="py-16 px-4 border-t border-border">
+        <div className="container mx-auto max-w-6xl">
+          <div className="mb-12">
+            <h2 className="font-heading text-3xl md:text-4xl font-black text-gradient-fire mb-2">
+              1º CAMPEONATO DE FOTOS
+            </h2>
+            <div className="w-24 h-1 bg-gradient-fire rounded mb-6"></div>
+            <p className="text-muted-foreground font-display text-sm">
+              Nenhum campeonato ativo no momento. Cadastre novas fotos no painel administrativo para que elas apareçam aqui!
+            </p>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (

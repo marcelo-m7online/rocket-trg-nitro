@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Plus, Trash2, Edit, X, Upload } from "lucide-react";
 
-const empty = { titulo: "", conteudo: "", autor: "", slug: "", publicado: false };
+const empty = { titulo: "", conteudo: "", autor: "", slug: "", publicado: true };
 
 export default function AdminBlog() {
   const qc = useQueryClient();
@@ -21,8 +21,20 @@ export default function AdminBlog() {
   const { data: posts } = useQuery({
     queryKey: ["admin-blog"],
     queryFn: async () => {
-      const { data } = await supabase.from("blog_posts").select("*").order("data_publicacao", { ascending: false });
-      return data || [];
+      try {
+        const { data, error } = await supabase.from("blog_posts").select("*").order("data_publicacao", { ascending: false });
+        if (error) throw error;
+        if (data) {
+          localStorage.setItem("admin_blog_backup", JSON.stringify(data));
+          const published = data.filter((p: any) => p.publicado).slice(0, 3);
+          localStorage.setItem("latest_posts_backup", JSON.stringify(published));
+        }
+        return data || [];
+      } catch (err) {
+        console.error("Erro ao carregar posts no admin:", err);
+        const saved = localStorage.getItem("admin_blog_backup");
+        return saved ? JSON.parse(saved) : [];
+      }
     },
   });
 

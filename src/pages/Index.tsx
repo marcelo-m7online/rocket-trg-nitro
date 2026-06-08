@@ -17,9 +17,9 @@ const Index = () => {
       <StatsSection />
       <QuickRanking />
       <UpcomingConvoys />
-      <CampeonatoFotos />
       <FormulaTruckNoticia />
       <GalleryCarousel />
+      <CampeonatoFotos />
       <LatestNews />
     </Layout>
   );

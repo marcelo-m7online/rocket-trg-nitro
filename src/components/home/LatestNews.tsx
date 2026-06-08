@@ -11,13 +11,23 @@ export default function LatestNews() {
   const { data: posts } = useQuery({
     queryKey: ["latest-posts"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("blog_posts")
-        .select("*")
-        .eq("publicado", true)
-        .order("data_publicacao", { ascending: false })
-        .limit(3);
-      return data || [];
+      try {
+        const { data, error } = await supabase
+          .from("blog_posts")
+          .select("*")
+          .eq("publicado", true)
+          .order("data_publicacao", { ascending: false })
+          .limit(3);
+        if (error) throw error;
+        if (data) {
+          localStorage.setItem("latest_posts_backup", JSON.stringify(data));
+        }
+        return data || [];
+      } catch (err) {
+        console.error("Erro ao carregar notícias do blog:", err);
+        const saved = localStorage.getItem("latest_posts_backup");
+        return saved ? JSON.parse(saved) : [];
+      }
     },
   });
 
