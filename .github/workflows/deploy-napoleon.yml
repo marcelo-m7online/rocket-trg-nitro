@@ -36,7 +36,7 @@ jobs:
           remote-port: 1157
           remote-user: ${{ secrets.FTP_USERNAME }}
           remote-password: ${{ secrets.FTP_PASSWORD }}
-          remote-path: /home/mon14152/domains/trglogistics.com.br/public_html/
+          remote-path: /home/monl4152/domains/trglogistics.com.br/public_html/
           local-path: ./dist/
           sync: full
 
