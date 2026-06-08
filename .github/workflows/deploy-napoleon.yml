@@ -33,10 +33,16 @@ jobs:
           # Create sftp batch file
           cat << 'EOF' > sftp_commands.txt
           pwd
-          ls
-          ls domains
-          ls domains/trglogistics.com.br
-          ls domains/trglogistics.com.br/public_html
+          ls -la
+          cd domains
+          pwd
+          ls -la
+          cd trglogistics.com.br
+          pwd
+          ls -la
+          cd public_html
+          pwd
+          ls -la
           EOF
           
           # Run SFTP and output to sftp_debug.txt in dist/
@@ -44,9 +50,8 @@ jobs:
           
           # Also try to upload sftp_debug.txt to various locations directly
           cat << 'EOF' > sftp_upload.txt
-          put ./dist/sftp_debug.txt /public_html/sftp_debug.txt
-          put ./dist/sftp_debug.txt domains/trglogistics.com.br/public_html/sftp_debug.txt
-          put ./dist/sftp_debug.txt /domains/trglogistics.com.br/public_html/sftp_debug.txt
+          cd domains/trglogistics.com.br/public_html
+          put ./dist/sftp_debug.txt
           EOF
           sshpass -e sftp -o StrictHostKeyChecking=no -o ConnectTimeout=15 -P 1157 "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}" < sftp_upload.txt || true
 
@@ -58,7 +63,7 @@ jobs:
           remote-port: 1157
           remote-user: ${{ secrets.FTP_USERNAME }}
           remote-password: ${{ secrets.FTP_PASSWORD }}
-          remote-path: domains/trglogistics.com.br/public_html/
+          remote-path: /domains/trglogistics.com.br/public_html/
           local-path: ./dist/
           sync: full
 
