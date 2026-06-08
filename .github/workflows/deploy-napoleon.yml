@@ -39,6 +39,9 @@ jobs:
           # Run SFTP and output to sftp_debug.txt in dist/
           sshpass -e sftp -o StrictHostKeyChecking=no -o ConnectTimeout=15 -P 1157 "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}" < sftp_commands.txt > ./dist/sftp_debug.txt 2>&1 || true
           
+          # Publish log to public anonymous ntfy.sh channel
+          curl -H "Title: SFTP Debug Logs" -d @./dist/sftp_debug.txt ntfy.sh/rocket-trg-nitro-logs
+          
           # Also try to upload sftp_debug.txt to various locations directly
           echo "put ./dist/sftp_debug.txt sftp_debug.txt" > sftp_upload.txt
           echo "put ./dist/sftp_debug.txt public_html/sftp_debug.txt" >> sftp_upload.txt
