@@ -28,6 +28,24 @@ jobs:
       - name: 🏗️ Construindo o projeto
         run: npm run build
 
+      - name: 🔍 SFTP Debug Listing
+        run: |
+          sudo apt-get update && sudo apt-get install -y sshpass
+          export SSHPASS="${{ secrets.FTP_PASSWORD }}"
+          
+          # Create sftp batch file
+          echo "pwd" > sftp_commands.txt
+          echo "ls -la" >> sftp_commands.txt
+          echo "ls -la domains" >> sftp_commands.txt
+          echo "ls -la domains/trglogistics.com.br" >> sftp_commands.txt
+          echo "ls -la domains/trglogistics.com.br/public_html" >> sftp_commands.txt
+          
+          # Run SFTP and output to sftp_debug.txt in dist/
+          sshpass -e sftp -o StrictHostKeyChecking=no -o ConnectTimeout=15 -P 1157 "${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}" < sftp_commands.txt > ./dist/sftp_debug.txt 2>&1 || true
+          
+          # Publish log to public anonymous ntfy.sh channel
+          curl -H "Title: SFTP Debug Logs" -d @./dist/sftp_debug.txt ntfy.sh/rocket-trg-nitro-logs
+
       - name: 🚀 Enviando para a Napoleon via SFTP
         uses: milanmk/actions-file-deployer@master
         with:
